@@ -5,11 +5,20 @@
 > Ditambah deteksi gangguan konektivitas *live* dari IODA untuk Indonesia dan dunia. Dibangun dengan Python, pandas,
 > Plotly, dan Streamlit di atas data terbuka **Access Now #KeepItOn**, **IODA**, dan **UCDP**.
 
-*An interactive tracker of deliberate internet shutdowns worldwide, 2016–2025: a choropleth of 1,888 documented
-shutdowns in 97 countries, yearly trends by trigger (protests, conflict, elections, exams), a Sankey of what actually
-happened versus what governments said, an Indonesia deep-dive (Papua 2019, the 2019 election blackout, the 2025
-TikTok Live block), live outage detection from IODA, and a cross-check against armed-conflict casualties. Python,
-pandas, Plotly, Streamlit.*
+## 🇬🇧 In English
+
+**Someone pulled the plug.** A tracker of deliberate internet shutdowns worldwide, 2016–2025: 1,888 documented shutdowns in 97 countries, who ordered them, how long they lasted, what was really happening on the ground, and what the official excuse was. Plus live outage detection for Indonesia and the world.
+
+- **Map** shutdowns and "dark days" per country, and trend them by trigger: protests, conflict, elections, exams.
+- **Compare** the real trigger with the government's stated reason in a Sankey diagram.
+- **Zoom into Indonesia**: Papua 2019, the 2019 post-election restrictions, the 2025 TikTok Live block, and live IODA connectivity signals.
+- **Cross-check** shutdowns against armed-conflict deaths from UCDP.
+
+**Built with:** Python, pandas, Plotly, Streamlit  
+**Data:** Access Now #KeepItOn STOP dataset, IODA (Georgia Tech), UCDP  
+**Engineering:** pytest suite with CI on GitHub Actions and a scheduled workflow that refreshes the IODA data
+
+*The rest of this README is in Indonesian.*
 
 **🔴 Live demo:** https://blackout-watch.streamlit.app
 
