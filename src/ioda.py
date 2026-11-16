@@ -56,8 +56,8 @@ def urai_ringkasan(data: list[dict[str, Any]]) -> pd.DataFrame:
     """
     baris = []
     for item in data:
-        ent = item.get("entity", {})
-        skor = item.get("scores", {}) or {}
+        ent = item.get("entity") or {}
+        skor = item.get("scores") or {}
         baris.append(
             {
                 "kode": ent.get("code", ""),
@@ -82,7 +82,10 @@ def urai_kejadian(data: list[dict[str, Any]]) -> pd.DataFrame:
     """
     baris = []
     for e in data:
-        mulai = pd.to_datetime(int(e.get("start", 0)), unit="s", utc=True)
+        # Kejadian tanpa waktu mulai tidak bisa digambar; jangan sampai jatuh ke 1970.
+        if not isinstance(e, dict) or e.get("start") in (None, ""):
+            continue
+        mulai = pd.to_datetime(int(e["start"]), unit="s", utc=True)
         durasi = int(e.get("duration", 0) or 0)
         baris.append(
             {
