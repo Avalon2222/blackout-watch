@@ -126,6 +126,17 @@ def test_per_negara_dan_peringkat(df_kecil):
     assert analisis.peringkat_negara(df_kecil, "Atlantis") == (0, 0)
 
 
+def test_per_negara_iso3_dan_pemicu_kosong(df_kecil):
+    df = df_kecil.copy()
+    df.loc[df["id"] == 6, "iso3"] = None
+    df.loc[df["id"] == 6, "pemicu"] = None
+    tabel = analisis.per_negara(df)
+    assert tabel["jumlah"].sum() == len(df)
+    irak = tabel[tabel["negara"] == "Irak"].iloc[0]
+    assert irak["jumlah"] == 1
+    assert irak["pemicu_utama"] == "Tidak diketahui"
+
+
 def test_per_kategori_persen(df_kecil):
     pk = analisis.per_kategori(df_kecil, "pemicu").set_index("pemicu")
     assert pk.loc["Unjuk rasa", "jumlah"] == 3

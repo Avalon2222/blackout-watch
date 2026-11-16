@@ -94,14 +94,17 @@ def per_negara(df: pd.DataFrame) -> pd.DataFrame:
     """Agregat per negara untuk choropleth: jumlah, total hari, pemicu dominan, tahun pertama/terakhir."""
     if df.empty:
         return pd.DataFrame(columns=["negara", "iso3", "wilayah", "jumlah", "hari", "pemicu_utama", "tahun_awal", "tahun_akhir"])
-    grup = df.groupby(["negara", "iso3", "wilayah"])
+    # dropna=False: baris dengan iso3/wilayah kosong tetap dihitung, tidak hilang dari peta & peringkat.
+    grup = df.groupby(["negara", "iso3", "wilayah"], dropna=False)
     hasil = grup.agg(
         jumlah=("id", "size"),
         hari=("durasi_hari", lambda s: float(s.fillna(0).sum())),
         tahun_awal=("tahun", "min"),
         tahun_akhir=("tahun", "max"),
     ).reset_index()
-    utama = grup["pemicu"].agg(lambda s: s.value_counts().index[0]).reset_index(name="pemicu_utama")
+    utama = grup["pemicu"].agg(
+        lambda s: s.value_counts().index[0] if s.notna().any() else "Tidak diketahui"
+    ).reset_index(name="pemicu_utama")
     hasil = hasil.merge(utama, on=["negara", "iso3", "wilayah"])
     return hasil.sort_values("jumlah", ascending=False).reset_index(drop=True)
 
