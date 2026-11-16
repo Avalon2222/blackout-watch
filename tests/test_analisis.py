@@ -305,6 +305,19 @@ def test_urai_kejadian_urut_terbaru():
     assert (df.iloc[0]["selesai"] - df.iloc[0]["mulai"]).total_seconds() == 1800
 
 
+def test_urai_kejadian_dan_ringkasan_melewati_data_cacat():
+    kejadian = ioda.urai_kejadian([
+        {"location": "country/ID", "start": None, "duration": 600},
+        {"location": "country/ID", "duration": 600},
+        {"location": "country/ID", "start": 1_700_000_000, "duration": 600},
+    ])
+    assert len(kejadian) == 1
+    assert kejadian.iloc[0]["mulai"].year == 2023
+    ringkas = ioda.urai_ringkasan([{"entity": None, "scores": None, "event_cnt": 2}])
+    assert ringkas.iloc[0]["jumlah_kejadian"] == 2
+    assert ringkas.iloc[0]["kode"] == ""
+
+
 def test_urai_sinyal_melewati_sumber_berobjek_dan_normalisasi():
     data = [[
         {"datasource": "bgp", "from": 1700000000, "step": 3600, "values": [100, 50, None, 100]},
