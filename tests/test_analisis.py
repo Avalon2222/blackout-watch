@@ -170,6 +170,17 @@ def test_linimasa_mengisi_tanggal_selesai(df_kecil):
     assert gantt["mulai"].is_monotonic_decreasing
 
 
+def test_linimasa_label_daerah_kosong_jadi_nasional(df_kecil):
+    df = df_kecil.copy()
+    df["daerah"] = df["daerah"].astype(object)
+    df.loc[df["id"] == 3, "daerah"] = None
+    df.loc[df["id"] == 6, "daerah"] = "  "
+    gantt = analisis.linimasa(df).set_index("id")
+    assert gantt.loc[3, "label"] == "Indonesia · nasional"
+    assert gantt.loc[6, "label"] == "Irak · nasional"
+    assert gantt["label"].notna().all()
+
+
 def test_profil_negara(df_kecil):
     prof = analisis.profil_negara(df_kecil, "Indonesia")
     assert len(prof["tabel"]) == 1
@@ -297,6 +308,13 @@ def test_info_negara():
     assert info_negara("Narnia") == ("", "Narnia", "Lainnya")
     assert nama_dari_iso3("MMR") == "Myanmar" and nama_dari_iso2("ID") == "Indonesia"
     assert nama_dari_iso2("ZZ", "Zeta") == "Zeta"
+
+
+def test_nama_dari_kode_iso_tidak_peka_huruf():
+    assert nama_dari_iso2("id") == "Indonesia"
+    assert nama_dari_iso2(" ID ") == "Indonesia"
+    assert nama_dari_iso3("mmr") == "Myanmar"
+    assert nama_dari_iso2(None, "Cadangan") == "Cadangan"
 
 
 def test_peta_negara_konsisten():
