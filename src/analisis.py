@@ -177,8 +177,13 @@ def linimasa(df: pd.DataFrame, maks: int = 60) -> pd.DataFrame:
     akhir = kerja["selesai"]
     dari_durasi = kerja["mulai"] + pd.to_timedelta(kerja["durasi_hari"].fillna(1).clip(lower=1) - 1, unit="D")
     # Pemutusan yang masih berlangsung tanpa tanggal selesai: bar ditarik sampai akhir tahun laporan terakhirnya
-    masih = pd.to_datetime(kerja["tahun_laporan_akhir"].astype(str) + "-12-31")
-    dari_durasi = dari_durasi.where(kerja["status"] != "Berlangsung", masih)
+    # tahun_laporan_akhir bisa bertipe float (ada NaN) sehingga astype(str) jadi "2025.0";
+    # bangun tanggal dari angka tahunnya langsung.
+    tahun_akhir = pd.to_numeric(kerja["tahun_laporan_akhir"], errors="coerce")
+    masih = pd.to_datetime(
+        pd.DataFrame({"year": tahun_akhir, "month": 12, "day": 31}), errors="coerce"
+    )
+    dari_durasi = dari_durasi.where((kerja["status"] != "Berlangsung") | masih.isna(), masih)
     kerja["akhir_gantt"] = akhir.where(akhir.notna(), dari_durasi)
     kerja["akhir_gantt"] = kerja["akhir_gantt"] + pd.Timedelta(days=1)  # bar minimal selebar 1 hari
     daerah = kerja["daerah"].fillna("").astype(str).str.strip().str.slice(0, 40)

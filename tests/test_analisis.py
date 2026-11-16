@@ -170,6 +170,15 @@ def test_linimasa_mengisi_tanggal_selesai(df_kecil):
     assert gantt["mulai"].is_monotonic_decreasing
 
 
+def test_linimasa_tahun_laporan_float_dan_kosong(df_kecil):
+    df = df_kecil.copy()
+    df["tahun_laporan_akhir"] = df["tahun_laporan_akhir"].astype(float)
+    df.loc[df["id"] == 6, "tahun_laporan_akhir"] = float("nan")
+    gantt = analisis.linimasa(df).set_index("id")
+    assert gantt.loc[4, "akhir_gantt"] == pd.Timestamp("2026-01-01")
+    assert gantt.loc[6, "akhir_gantt"] == pd.Timestamp("2023-06-11")
+
+
 def test_linimasa_label_daerah_kosong_jadi_nasional(df_kecil):
     df = df_kecil.copy()
     df["daerah"] = df["daerah"].astype(object)
