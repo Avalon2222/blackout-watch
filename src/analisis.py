@@ -181,7 +181,8 @@ def linimasa(df: pd.DataFrame, maks: int = 60) -> pd.DataFrame:
     dari_durasi = dari_durasi.where(kerja["status"] != "Berlangsung", masih)
     kerja["akhir_gantt"] = akhir.where(akhir.notna(), dari_durasi)
     kerja["akhir_gantt"] = kerja["akhir_gantt"] + pd.Timedelta(days=1)  # bar minimal selebar 1 hari
-    kerja["label"] = kerja["negara"] + " · " + kerja["daerah"].str.slice(0, 40).replace("", "nasional")
+    daerah = kerja["daerah"].fillna("").astype(str).str.strip().str.slice(0, 40)
+    kerja["label"] = kerja["negara"] + " · " + daerah.replace("", "nasional")
     kerja = kerja.sort_values("mulai", ascending=False).head(maks)
     return kerja
 
