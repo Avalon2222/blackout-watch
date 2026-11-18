@@ -26,7 +26,10 @@ def muat_shutdown(path: Path | None = None) -> pd.DataFrame:
         raise ValueError(f"Kolom hilang di shutdown_dunia.csv: {hilang}")
     df["mulai"] = pd.to_datetime(df["mulai"], errors="coerce")
     df["selesai"] = pd.to_datetime(df["selesai"], errors="coerce")
-    df["tahun"] = df["tahun"].astype(int)
+    # Tahun kosong diisi dari tanggal mulai; baris yang tetap tanpa tahun dibuang daripada membuat astype(int) gagal.
+    tahun = pd.to_numeric(df["tahun"], errors="coerce").fillna(df["mulai"].dt.year)
+    df = df[tahun.notna()].copy()
+    df["tahun"] = tahun[tahun.notna()].astype(int)
     for kolom in ["daerah", "keterangan", "sumber_url", "platform"]:
         df[kolom] = df[kolom].fillna("").astype(str)
     return df

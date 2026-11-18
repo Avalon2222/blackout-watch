@@ -429,3 +429,15 @@ def test_gabung_konflik_iso3_kosong_tidak_hilang(df_kecil, df_konflik):
     gab = analisis.gabung_konflik(df, df_konflik, 2016, 2025)
     assert gab["shutdown"].sum() == len(df)
     assert "Irak" in set(gab["negara"])
+
+
+def test_muat_shutdown_tahun_kosong_diisi_dari_tanggal_mulai(tmp_path):
+    df = muat_data.muat_shutdown().head(3).copy()
+    df["tahun"] = df["tahun"].astype("float")
+    df.loc[df.index[0], "tahun"] = None
+    df.loc[df.index[1], ["tahun", "mulai"]] = [None, None]
+    path = tmp_path / "shutdown.csv"
+    df.to_csv(path, index=False)
+    hasil = muat_data.muat_shutdown(path)
+    assert len(hasil) == 2
+    assert hasil["tahun"].iloc[0] == pd.Timestamp(df["mulai"].iloc[0]).year
