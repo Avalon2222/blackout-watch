@@ -129,9 +129,10 @@ def _peta(nilai, tabel: dict[str, str], bawaan: str = "Tidak diketahui") -> str:
 
 def daftar_platform(baris: pd.Series) -> str:
     """Gabungkan kolom *_affected + other_affected menjadi teks 'Facebook; WhatsApp; TikTok'."""
-    nama = [label for kolom, label in KOLOM_PLATFORM.items() if str(baris.get(kolom, "")).strip() == "Yes"]
+    # Spreadsheet STOP tidak selalu konsisten huruf besarnya ("Yes", "yes", "YES ").
+    nama = [label for kolom, label in KOLOM_PLATFORM.items() if str(baris.get(kolom, "")).strip().lower() == "yes"]
     lain = baris.get("other_affected")
-    if isinstance(lain, str) and lain.strip() and lain.strip().lower() not in {"none", "nan", "no", "unknown"}:
+    if isinstance(lain, str) and lain.strip() and lain.strip().lower() not in {"none", "nan", "no", "unknown", "n/a", "na", "-"}:
         teks = lain.strip()
         nama.append(teks if len(teks) <= 60 else teks[:57] + "...")
     return "; ".join(nama)

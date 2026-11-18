@@ -382,3 +382,10 @@ def test_data_konflik_dan_potret_ioda():
     sinyal = muat_data.muat_potret_ioda("sinyal_indonesia_7hari")
     assert not sinyal.empty and str(sinyal["waktu"].dt.tz) == "UTC"
     assert muat_data.muat_potret_ioda("tidak_ada").empty
+
+
+def test_daftar_platform_tidak_peka_huruf_dan_lewati_na():
+    baris = pd.Series({"facebook_affected": "yes", "twitter_affected": "YES ", "whatsapp_affected": "no",
+                       "other_affected": "N/A"})
+    assert siapkan_data.daftar_platform(baris) == "Facebook; X/Twitter"
+    assert siapkan_data.daftar_platform(pd.Series({"other_affected": "-"})) == ""
