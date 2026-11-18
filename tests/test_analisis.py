@@ -413,3 +413,11 @@ def test_urai_sinyal_melewati_seri_null():
     df = ioda.urai_sinyal(data)
     assert list(df["sumber"]) == ["bgp", "bgp"]
     assert list(df["nilai"]) == [10.0, 12.0]
+
+
+def test_per_tahun_pemicu_kosong_tetap_terhitung(df_kecil):
+    df = df_kecil.copy()
+    df.loc[0, "pemicu"] = None
+    hasil = analisis.per_tahun(df, "pemicu")
+    assert hasil["jumlah"].sum() == len(df)
+    assert "Tidak diketahui" in set(hasil["pemicu"])
