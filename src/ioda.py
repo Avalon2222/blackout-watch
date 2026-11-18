@@ -120,6 +120,9 @@ def urai_sinyal(data: list[Any]) -> pd.DataFrame:
     for grup in data:
         seri_list = grup if isinstance(grup, list) else [grup]
         for seri in seri_list:
+            # Entitas tanpa data kadang berisi null di dalam list.
+            if not isinstance(seri, dict):
+                continue
             sumber = seri.get("datasource", "")
             nilai = seri.get("values") or []
             if not nilai or not all(v is None or isinstance(v, (int, float)) for v in nilai):
