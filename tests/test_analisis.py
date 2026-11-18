@@ -421,3 +421,11 @@ def test_per_tahun_pemicu_kosong_tetap_terhitung(df_kecil):
     hasil = analisis.per_tahun(df, "pemicu")
     assert hasil["jumlah"].sum() == len(df)
     assert "Tidak diketahui" in set(hasil["pemicu"])
+
+
+def test_gabung_konflik_iso3_kosong_tidak_hilang(df_kecil, df_konflik):
+    df = df_kecil.copy()
+    df.loc[5, "iso3"] = None
+    gab = analisis.gabung_konflik(df, df_konflik, 2016, 2025)
+    assert gab["shutdown"].sum() == len(df)
+    assert "Irak" in set(gab["negara"])
