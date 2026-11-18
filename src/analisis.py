@@ -72,7 +72,9 @@ def ringkasan(df: pd.DataFrame) -> dict:
 def per_tahun(df: pd.DataFrame, pecah: str | None = "pemicu") -> pd.DataFrame:
     """Jumlah pemutusan per tahun mulai, opsional dipecah per kolom kategori (pemicu/jenis/wilayah)."""
     if pecah:
-        hasil = df.groupby(["tahun", pecah]).size().reset_index(name="jumlah")
+        # Kategori kosong diberi label agar total per tahun tetap sama dengan jumlah pemutusan.
+        kategori = df[pecah].fillna("Tidak diketahui")
+        hasil = df.assign(**{pecah: kategori}).groupby(["tahun", pecah]).size().reset_index(name="jumlah")
     else:
         hasil = df.groupby("tahun").size().reset_index(name="jumlah")
     return hasil.sort_values("tahun").reset_index(drop=True)
