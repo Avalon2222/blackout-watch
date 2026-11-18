@@ -85,8 +85,12 @@ def urai_kejadian(data: list[dict[str, Any]]) -> pd.DataFrame:
         # Kejadian tanpa waktu mulai tidak bisa digambar; jangan sampai jatuh ke 1970.
         if not isinstance(e, dict) or e.get("start") in (None, ""):
             continue
-        mulai = pd.to_datetime(int(e["start"]), unit="s", utc=True)
-        durasi = int(e.get("duration", 0) or 0)
+        # Epoch kadang datang sebagai teks berdesimal ("1731900000.0"); int() langsung akan gagal.
+        try:
+            mulai = pd.to_datetime(int(float(e["start"])), unit="s", utc=True)
+            durasi = int(float(e.get("duration", 0) or 0))
+        except (TypeError, ValueError):
+            continue
         baris.append(
             {
                 "lokasi": e.get("location", ""),
