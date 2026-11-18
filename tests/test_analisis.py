@@ -441,3 +441,10 @@ def test_muat_shutdown_tahun_kosong_diisi_dari_tanggal_mulai(tmp_path):
     hasil = muat_data.muat_shutdown(path)
     assert len(hasil) == 2
     assert hasil["tahun"].iloc[0] == pd.Timestamp(df["mulai"].iloc[0]).year
+
+
+def test_profil_negara_platform_spasi_tidak_dihitung(df_kecil):
+    df = df_kecil.copy()
+    df["platform"] = ["", "", "   ", "", "", ""]
+    prof = analisis.profil_negara(df, "Indonesia")
+    assert prof["platform"].empty

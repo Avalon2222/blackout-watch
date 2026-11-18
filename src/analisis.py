@@ -205,7 +205,7 @@ def profil_negara(df: pd.DataFrame, negara: str) -> dict:
         "ringkasan": ringkasan(sub),
         "per_tahun": per_tahun(sub, "pemicu"),
         "pemicu": per_kategori(sub, "pemicu"),
-        "platform": per_kategori(sub[sub["platform"] != ""], "cakupan_layanan"),
+        "platform": per_kategori(sub[sub["platform"].fillna("").astype(str).str.strip() != ""], "cakupan_layanan"),
     }
 
 
