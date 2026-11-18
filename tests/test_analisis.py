@@ -406,3 +406,10 @@ def test_urai_kejadian_epoch_teks_berdesimal():
     assert len(df) == 1
     assert df.loc[0, "mulai"] == pd.Timestamp(1731900000, unit="s", tz="UTC")
     assert df.loc[0, "durasi_menit"] == 60.0
+
+
+def test_urai_sinyal_melewati_seri_null():
+    data = [[None, {"datasource": "bgp", "from": 0, "step": 300, "values": [10, 12]}], None]
+    df = ioda.urai_sinyal(data)
+    assert list(df["sumber"]) == ["bgp", "bgp"]
+    assert list(df["nilai"]) == [10.0, 12.0]
