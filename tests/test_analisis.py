@@ -389,3 +389,9 @@ def test_daftar_platform_tidak_peka_huruf_dan_lewati_na():
                        "other_affected": "N/A"})
     assert siapkan_data.daftar_platform(baris) == "Facebook; X/Twitter"
     assert siapkan_data.daftar_platform(pd.Series({"other_affected": "-"})) == ""
+
+
+def test_info_negara_kosong_tidak_jadi_nan():
+    assert info_negara(float("nan")) == ("", "Tidak diketahui", "Lainnya")
+    assert info_negara(None) == ("", "Tidak diketahui", "Lainnya")
+    assert info_negara("  ") == ("", "Tidak diketahui", "Lainnya")

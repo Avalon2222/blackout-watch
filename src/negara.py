@@ -143,7 +143,10 @@ def info_negara(nama_stop: str) -> tuple[str, str, str]:
     """
     if nama_stop in PETA_NEGARA:
         return PETA_NEGARA[nama_stop]
-    bersih = str(nama_stop).strip()
+    # Sel negara yang kosong (NaN) jangan sampai tampil sebagai negara bernama "nan".
+    if not isinstance(nama_stop, str) or not nama_stop.strip():
+        return ("", "Tidak diketahui", "Lainnya")
+    bersih = nama_stop.strip()
     if bersih in PETA_NEGARA:
         return PETA_NEGARA[bersih]
     # Baris multi-negara ("A; B"): pakai negara pertama
