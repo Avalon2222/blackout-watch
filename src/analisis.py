@@ -216,7 +216,8 @@ def gabung_konflik(df_shutdown: pd.DataFrame, df_konflik: pd.DataFrame, tahun_aw
     berdarah tetapi tidak memutus internet, dan sebaliknya.
     """
     sd = df_shutdown[df_shutdown["tahun"].between(tahun_awal, tahun_akhir)]
-    sd = sd.groupby(["iso3", "negara", "tahun"]).size().reset_index(name="shutdown")
+    # dropna=False: pemutusan dengan iso3 kosong tetap dihitung, tidak hilang diam-diam dari total.
+    sd = sd.groupby(["iso3", "negara", "tahun"], dropna=False).size().reset_index(name="shutdown")
     kf = df_konflik[df_konflik["tahun"].between(tahun_awal, tahun_akhir)][["iso3", "negara", "tahun", "korban", "kejadian"]]
     gabung = sd.merge(kf, on=["iso3", "tahun"], how="outer", suffixes=("", "_ucdp"))
     gabung["negara"] = gabung["negara"].fillna(gabung["negara_ucdp"])
