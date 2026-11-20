@@ -108,7 +108,7 @@ def urai_kejadian(data: list[dict[str, Any]]) -> pd.DataFrame:
                 "selesai": mulai + pd.Timedelta(seconds=durasi),
                 "durasi_menit": round(durasi / 60, 1),
                 "sumber": e.get("datasource", ""),
-                "skor": float(e.get("score", 0) or 0),
+                "skor": _angka(e.get("score")),
                 "sedang_berlangsung": bool(e.get("overlaps_window", False)),
             }
         )

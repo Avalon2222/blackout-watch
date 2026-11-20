@@ -473,3 +473,12 @@ def test_urai_ringkasan_angka_teks_dan_sampah():
     assert ringkas["jumlah_kejadian"].tolist() == [3, 0]
     assert ringkas["skor_total"].tolist() == [1234.5, 0.0]
     assert ringkas.iloc[0]["skor_bgp"] == 0.0
+
+
+def test_urai_kejadian_skor_cacat_tidak_menggagalkan_semua():
+    df = ioda.urai_kejadian([
+        {"location": "country/ID", "start": 1_700_000_000, "duration": 600, "score": "tinggi"},
+        {"location": "country/MM", "start": 1_700_000_600, "duration": 600, "score": "42.5"},
+    ])
+    assert len(df) == 2
+    assert sorted(df["skor"].tolist()) == [0.0, 42.5]
