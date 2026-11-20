@@ -482,3 +482,13 @@ def test_urai_kejadian_skor_cacat_tidak_menggagalkan_semua():
     ])
     assert len(df) == 2
     assert sorted(df["skor"].tolist()) == [0.0, 42.5]
+
+
+def test_urai_kejadian_durasi_negatif_dan_tak_hingga():
+    df = ioda.urai_kejadian([
+        {"location": "country/ID", "start": 1_700_000_000, "duration": -600},
+        {"location": "country/ID", "start": 1_700_000_000, "duration": "inf"},
+    ])
+    assert len(df) == 1
+    assert df.iloc[0]["durasi_menit"] == 0.0
+    assert df.iloc[0]["selesai"] == df.iloc[0]["mulai"]

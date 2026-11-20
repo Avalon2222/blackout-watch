@@ -97,8 +97,9 @@ def urai_kejadian(data: list[dict[str, Any]]) -> pd.DataFrame:
         # Epoch kadang datang sebagai teks berdesimal ("1731900000.0"); int() langsung akan gagal.
         try:
             mulai = pd.to_datetime(int(float(e["start"])), unit="s", utc=True)
-            durasi = int(float(e.get("duration", 0) or 0))
-        except (TypeError, ValueError):
+            # Durasi negatif membuat waktu selesai jatuh sebelum mulai; anggap saja kejadian sesaat.
+            durasi = max(int(float(e.get("duration", 0) or 0)), 0)
+        except (TypeError, ValueError, OverflowError):
             continue
         baris.append(
             {
