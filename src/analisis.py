@@ -116,12 +116,16 @@ def top_negara(df: pd.DataFrame, n: int = 12) -> pd.DataFrame:
 
 
 def peringkat_negara(df: pd.DataFrame, negara: str = "Indonesia") -> tuple[int, int]:
-    """(peringkat, jumlah) suatu negara menurut jumlah pemutusan; peringkat 0 jika tidak ada."""
+    """(peringkat, jumlah) suatu negara menurut jumlah pemutusan; peringkat 0 jika tidak ada.
+
+    Negara dengan jumlah yang sama berbagi peringkat (gaya kompetisi 1, 2, 2, 4), sehingga hasilnya
+    tidak bergantung pada urutan baris yang kebetulan keluar dari pengurutan.
+    """
     tabel = per_negara(df)
     if negara not in set(tabel["negara"]):
         return 0, 0
-    posisi = tabel.index[tabel["negara"] == negara][0]
-    return int(posisi) + 1, int(tabel.loc[posisi, "jumlah"])
+    jumlah = int(tabel.loc[tabel["negara"] == negara, "jumlah"].sum())
+    return int((tabel["jumlah"] > jumlah).sum()) + 1, jumlah
 
 
 def per_kategori(df: pd.DataFrame, kolom: str) -> pd.DataFrame:
