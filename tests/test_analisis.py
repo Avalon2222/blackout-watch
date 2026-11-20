@@ -463,3 +463,13 @@ def test_peringkat_negara_seri_berbagi_peringkat():
     assert analisis.peringkat_negara(df, "A") == (1, 2)
     # B, C, dan D sama-sama satu pemutusan: semuanya peringkat 2, bukan 2/3/4 menurut urutan baris.
     assert [analisis.peringkat_negara(df, n)[0] for n in ["B", "C", "D"]] == [2, 2, 2]
+
+
+def test_urai_ringkasan_angka_teks_dan_sampah():
+    ringkas = ioda.urai_ringkasan([
+        {"entity": {"code": "ID"}, "scores": {"overall": "1234.5", "bgp.median": "NaN"}, "event_cnt": "3.0"},
+        {"entity": {"code": "MM"}, "scores": {"overall": "n/a"}, "event_cnt": "banyak"},
+    ])
+    assert ringkas["jumlah_kejadian"].tolist() == [3, 0]
+    assert ringkas["skor_total"].tolist() == [1234.5, 0.0]
+    assert ringkas.iloc[0]["skor_bgp"] == 0.0

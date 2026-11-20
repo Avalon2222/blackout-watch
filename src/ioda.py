@@ -49,6 +49,15 @@ def _get(jalur: str, params: dict[str, Any]) -> dict[str, Any]:
 # ----------------------------------------------------------------------------
 # Fungsi murni: mengubah JSON IODA menjadi DataFrame
 # ----------------------------------------------------------------------------
+def _angka(nilai: Any, bawaan: float = 0.0) -> float:
+    """Ubah nilai JSON jadi float; teks berdesimal ("12.0") diterima, sampah/NaN/inf jadi `bawaan`."""
+    try:
+        hasil = float(nilai)
+    except (TypeError, ValueError):
+        return bawaan
+    return hasil if pd.notna(hasil) and abs(hasil) != float("inf") else bawaan
+
+
 def urai_ringkasan(data: list[dict[str, Any]]) -> pd.DataFrame:
     """Ringkasan gangguan per entitas (negara) dalam satu jendela waktu.
 
@@ -63,12 +72,12 @@ def urai_ringkasan(data: list[dict[str, Any]]) -> pd.DataFrame:
                 "kode": ent.get("code", ""),
                 "nama_en": ent.get("name", ""),
                 "tipe": ent.get("type", ""),
-                "jumlah_kejadian": int(item.get("event_cnt", 0) or 0),
-                "skor_total": float(skor.get("overall", 0) or 0),
-                "skor_bgp": float(skor.get("bgp.median", 0) or 0),
-                "skor_ping": float(skor.get("ping-slash24.median", 0) or 0),
-                "skor_teleskop": float(skor.get("merit-nt.median", 0) or 0),
-                "skor_google": float(skor.get("gtr.sarima", 0) or 0),
+                "jumlah_kejadian": int(_angka(item.get("event_cnt"))),
+                "skor_total": _angka(skor.get("overall")),
+                "skor_bgp": _angka(skor.get("bgp.median")),
+                "skor_ping": _angka(skor.get("ping-slash24.median")),
+                "skor_teleskop": _angka(skor.get("merit-nt.median")),
+                "skor_google": _angka(skor.get("gtr.sarima")),
             }
         )
     kolom = ["kode", "nama_en", "tipe", "jumlah_kejadian", "skor_total", "skor_bgp", "skor_ping", "skor_teleskop", "skor_google"]
