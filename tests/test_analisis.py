@@ -448,3 +448,18 @@ def test_profil_negara_platform_spasi_tidak_dihitung(df_kecil):
     df["platform"] = ["", "", "   ", "", "", ""]
     prof = analisis.profil_negara(df, "Indonesia")
     assert prof["platform"].empty
+
+
+def test_peringkat_negara_seri_berbagi_peringkat():
+    df = pd.DataFrame({
+        "id": range(5),
+        "negara": ["A", "A", "B", "C", "D"],
+        "iso3": ["AAA", "AAA", "BBB", "CCC", "DDD"],
+        "wilayah": ["Asia"] * 5,
+        "durasi_hari": [1.0] * 5,
+        "tahun": [2020] * 5,
+        "pemicu": ["Pemilu"] * 5,
+    })
+    assert analisis.peringkat_negara(df, "A") == (1, 2)
+    # B, C, dan D sama-sama satu pemutusan: semuanya peringkat 2, bukan 2/3/4 menurut urutan baris.
+    assert [analisis.peringkat_negara(df, n)[0] for n in ["B", "C", "D"]] == [2, 2, 2]
