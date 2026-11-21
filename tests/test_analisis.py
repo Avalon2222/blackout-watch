@@ -492,3 +492,11 @@ def test_urai_kejadian_durasi_negatif_dan_tak_hingga():
     assert len(df) == 1
     assert df.iloc[0]["durasi_menit"] == 0.0
     assert df.iloc[0]["selesai"] == df.iloc[0]["mulai"]
+
+
+def test_per_kategori_nilai_kosong_tetap_dihitung():
+    df = pd.DataFrame({"pemicu": ["Pemilu", None, "Pemilu", float("nan")]})
+    hasil = analisis.per_kategori(df, "pemicu")
+    assert hasil["jumlah"].sum() == 4
+    assert hasil["persen"].sum() == pytest.approx(100.0)
+    assert "Tidak diketahui" in set(hasil["pemicu"])
