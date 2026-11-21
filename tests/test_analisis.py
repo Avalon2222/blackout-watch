@@ -500,3 +500,11 @@ def test_per_kategori_nilai_kosong_tetap_dihitung():
     assert hasil["jumlah"].sum() == 4
     assert hasil["persen"].sum() == pytest.approx(100.0)
     assert "Tidak diketahui" in set(hasil["pemicu"])
+
+
+def test_pemicu_vs_alasan_alasan_kosong_tetap_masuk_sankey():
+    df = pd.DataFrame({"pemicu": ["Pemilu"] * 6, "alasan_pemerintah": [None] * 6})
+    hasil = analisis.pemicu_vs_alasan(df, minimal=5)
+    assert len(hasil) == 1
+    assert hasil.loc[0, "alasan_pemerintah"] == "Tidak diketahui"
+    assert hasil.loc[0, "jumlah"] == 6
