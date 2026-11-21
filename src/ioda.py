@@ -135,10 +135,15 @@ def urai_sinyal(data: list[Any]) -> pd.DataFrame:
                 continue
             sumber = seri.get("datasource", "")
             nilai = seri.get("values") or []
-            if not nilai or not all(v is None or isinstance(v, (int, float)) for v in nilai):
+            # bool adalah turunan int di Python; True/False bukan nilai sinyal yang sah.
+            if not nilai or not all(v is None or (isinstance(v, (int, float)) and not isinstance(v, bool)) for v in nilai):
                 continue
-            langkah = int(seri.get("step", 0) or 0)
-            awal = int(seri.get("from", 0) or 0)
+            # step/from kadang datang sebagai teks berdesimal ("300.0"); int() langsung akan gagal.
+            langkah = int(_angka(seri.get("step")))
+            awal = int(_angka(seri.get("from")))
+            # Tanpa langkah waktu semua titik jatuh di detik yang sama; seri seperti itu tidak bisa digambar.
+            if langkah <= 0:
+                continue
             for i, v in enumerate(nilai):
                 baris.append(
                     {

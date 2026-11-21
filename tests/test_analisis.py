@@ -508,3 +508,16 @@ def test_pemicu_vs_alasan_alasan_kosong_tetap_masuk_sankey():
     assert len(hasil) == 1
     assert hasil.loc[0, "alasan_pemerintah"] == "Tidak diketahui"
     assert hasil.loc[0, "jumlah"] == 6
+
+
+def test_urai_sinyal_langkah_teks_dan_nilai_bool():
+    data = [
+        [
+            {"datasource": "bgp", "from": "0", "step": "300.0", "values": [10, 12]},
+            {"datasource": "aneh", "from": 0, "step": 300, "values": [True, False]},
+            {"datasource": "ping-slash24", "from": 0, "step": 0, "values": [5, 6]},
+        ]
+    ]
+    df = ioda.urai_sinyal(data)
+    assert list(df["sumber"]) == ["bgp", "bgp"]
+    assert df["waktu"].iloc[1] - df["waktu"].iloc[0] == pd.Timedelta(seconds=300)
