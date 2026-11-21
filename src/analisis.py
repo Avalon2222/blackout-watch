@@ -57,7 +57,7 @@ def ringkasan(df: pd.DataFrame) -> dict:
     per_negara = df.groupby("negara").size().sort_values(ascending=False)
     kekerasan_diketahui = df[df["kekerasan"].isin(["Ya", "Tidak"])]
     return {
-        "jumlah": int(len(df)),
+        "jumlah": len(df),
         "negara": int(df["negara"].nunique()),
         "hari": float(df["durasi_hari"].fillna(0).sum()),
         "median_hari": float(df["durasi_hari"].median()) if df["durasi_hari"].notna().any() else 0.0,
@@ -242,8 +242,8 @@ def korelasi_konflik(gabung: pd.DataFrame) -> dict:
     dengan = konflik[konflik["shutdown"] > 0]
     total_shutdown = gabung["shutdown"].sum()
     return {
-        "negara_tahun_konflik": int(len(konflik)),
-        "dengan_shutdown": int(len(dengan)),
+        "negara_tahun_konflik": len(konflik),
+        "dengan_shutdown": len(dengan),
         "persen": float(len(dengan) / len(konflik) * 100) if len(konflik) else 0.0,
         "shutdown_di_negara_konflik": float(konflik["shutdown"].sum() / total_shutdown * 100) if total_shutdown else 0.0,
     }
