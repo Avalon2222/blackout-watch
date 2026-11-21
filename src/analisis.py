@@ -130,7 +130,8 @@ def peringkat_negara(df: pd.DataFrame, negara: str = "Indonesia") -> tuple[int, 
 
 def per_kategori(df: pd.DataFrame, kolom: str) -> pd.DataFrame:
     """Jumlah dan persentase per nilai suatu kolom kategori (pemicu, alasan_pemerintah, jaringan, ...)."""
-    hasil = df[kolom].value_counts().reset_index()
+    # Sel kosong diberi label sendiri agar persentasenya tetap berjumlah 100%.
+    hasil = df[kolom].fillna("Tidak diketahui").value_counts().reset_index()
     hasil.columns = [kolom, "jumlah"]
     hasil["persen"] = (hasil["jumlah"] / max(len(df), 1) * 100).round(1)
     return hasil
