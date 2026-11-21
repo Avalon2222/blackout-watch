@@ -139,7 +139,9 @@ def per_kategori(df: pd.DataFrame, kolom: str) -> pd.DataFrame:
 
 def pemicu_vs_alasan(df: pd.DataFrame, minimal: int = 5) -> pd.DataFrame:
     """Pasangan (pemicu sebenarnya -> alasan resmi pemerintah) untuk diagram Sankey."""
-    pasangan = df.groupby(["pemicu", "alasan_pemerintah"]).size().reset_index(name="jumlah")
+    # groupby membuang NaN; isi dulu agar pemutusan tanpa alasan resmi tetap muncul di Sankey.
+    kerja = df[["pemicu", "alasan_pemerintah"]].fillna("Tidak diketahui")
+    pasangan = kerja.groupby(["pemicu", "alasan_pemerintah"]).size().reset_index(name="jumlah")
     pasangan = pasangan[pasangan["jumlah"] >= minimal]
     return pasangan.sort_values("jumlah", ascending=False).reset_index(drop=True)
 
