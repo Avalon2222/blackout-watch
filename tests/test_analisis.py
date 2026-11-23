@@ -548,3 +548,13 @@ def test_urai_sinyal_nilai_tak_hingga_jadi_kosong():
     assert df["nilai"].isna().tolist() == [False, True, True, False]
     rel = ioda.normalisasi_sinyal(df)["relatif"].dropna()
     assert rel.between(0, 2).all()
+
+
+def test_urai_kejadian_bendera_berlangsung_teks():
+    data = [
+        {"location": "country/ID", "start": 1731900000, "duration": 60, "overlaps_window": "false"},
+        {"location": "country/ID", "start": 1731900600, "duration": 60, "overlaps_window": "true"},
+        {"location": "country/ID", "start": 1731901200, "duration": 60, "overlaps_window": None},
+    ]
+    df = ioda.urai_kejadian(data).sort_values("mulai")
+    assert df["sedang_berlangsung"].tolist() == [False, True, False]
