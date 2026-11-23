@@ -149,7 +149,8 @@ def urai_sinyal(data: list[Any]) -> pd.DataFrame:
                     {
                         "waktu": pd.to_datetime(awal + i * langkah, unit="s", utc=True),
                         "sumber": sumber,
-                        "nilai": None if v is None else float(v),
+                        # NaN/inf dari API dianggap titik kosong; inf merusak skala grafik & median.
+                        "nilai": _angka(v, None) if v is not None else None,
                     }
                 )
     df = pd.DataFrame(baris, columns=["waktu", "sumber", "nilai"])
