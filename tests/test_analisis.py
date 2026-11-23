@@ -539,3 +539,12 @@ def test_per_negara_jumlah_seri_urut_nama():
     teratas = hasil[hasil["jumlah"] == 3]["negara"].tolist()
     assert teratas == sorted(teratas)
     assert hasil["jumlah"].is_monotonic_decreasing
+
+
+def test_urai_sinyal_nilai_tak_hingga_jadi_kosong():
+    data = [[{"datasource": "bgp", "from": 0, "step": 300, "values": [10, float("inf"), float("nan"), 12]}]]
+    df = ioda.urai_sinyal(data)
+    assert len(df) == 4
+    assert df["nilai"].isna().tolist() == [False, True, True, False]
+    rel = ioda.normalisasi_sinyal(df)["relatif"].dropna()
+    assert rel.between(0, 2).all()
