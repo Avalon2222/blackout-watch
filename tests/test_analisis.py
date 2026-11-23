@@ -521,3 +521,9 @@ def test_urai_sinyal_langkah_teks_dan_nilai_bool():
     df = ioda.urai_sinyal(data)
     assert list(df["sumber"]) == ["bgp", "bgp"]
     assert df["waktu"].iloc[1] - df["waktu"].iloc[0] == pd.Timedelta(seconds=300)
+
+
+def test_top_negara_dan_linimasa_batas_negatif_kosong(df_kecil):
+    assert analisis.top_negara(df_kecil, n=-1).empty
+    assert analisis.linimasa(df_kecil, maks=-2).empty
+    assert len(analisis.top_negara(df_kecil, n=2)) == 2
