@@ -112,7 +112,8 @@ def per_negara(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def top_negara(df: pd.DataFrame, n: int = 12) -> pd.DataFrame:
-    return per_negara(df).head(n)
+    # head(-n) membuang n baris terakhir dan mengembalikan hampir semua negara; batas negatif = nol.
+    return per_negara(df).head(max(n, 0))
 
 
 def peringkat_negara(df: pd.DataFrame, negara: str = "Indonesia") -> tuple[int, int]:
@@ -200,7 +201,7 @@ def linimasa(df: pd.DataFrame, maks: int = 60) -> pd.DataFrame:
     kerja["akhir_gantt"] = kerja["akhir_gantt"] + pd.Timedelta(days=1)  # bar minimal selebar 1 hari
     daerah = kerja["daerah"].fillna("").astype(str).str.strip().str.slice(0, 40)
     kerja["label"] = kerja["negara"] + " · " + daerah.replace("", "nasional")
-    kerja = kerja.sort_values("mulai", ascending=False).head(maks)
+    kerja = kerja.sort_values("mulai", ascending=False).head(max(maks, 0))
     return kerja
 
 
