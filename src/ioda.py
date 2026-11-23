@@ -58,6 +58,13 @@ def _angka(nilai: Any, bawaan: float = 0.0) -> float:
     return hasil if pd.notna(hasil) and abs(hasil) != float("inf") else bawaan
 
 
+def _ya(nilai: Any) -> bool:
+    """Bendera JSON jadi bool; teks "false"/"0" tidak ikut terbaca True seperti pada bool("false")."""
+    if isinstance(nilai, str):
+        return nilai.strip().lower() in {"true", "1", "yes"}
+    return bool(nilai) if nilai is not None and pd.notna(nilai) else False
+
+
 def urai_ringkasan(data: list[dict[str, Any]]) -> pd.DataFrame:
     """Ringkasan gangguan per entitas (negara) dalam satu jendela waktu.
 
@@ -110,7 +117,7 @@ def urai_kejadian(data: list[dict[str, Any]]) -> pd.DataFrame:
                 "durasi_menit": round(durasi / 60, 1),
                 "sumber": e.get("datasource", ""),
                 "skor": _angka(e.get("score")),
-                "sedang_berlangsung": bool(e.get("overlaps_window", False)),
+                "sedang_berlangsung": _ya(e.get("overlaps_window", False)),
             }
         )
     kolom = ["lokasi", "nama_en", "mulai", "selesai", "durasi_menit", "sumber", "skor", "sedang_berlangsung"]
