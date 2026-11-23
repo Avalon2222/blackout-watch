@@ -108,7 +108,8 @@ def per_negara(df: pd.DataFrame) -> pd.DataFrame:
         lambda s: s.value_counts().index[0] if s.notna().any() else "Tidak diketahui"
     ).reset_index(name="pemicu_utama")
     hasil = hasil.merge(utama, on=["negara", "iso3", "wilayah"])
-    return hasil.sort_values("jumlah", ascending=False).reset_index(drop=True)
+    # Jumlah seri diurutkan menurut nama negara supaya peringkat & grafik tidak acak tiap kali dihitung.
+    return hasil.sort_values(["jumlah", "negara"], ascending=[False, True], kind="mergesort").reset_index(drop=True)
 
 
 def top_negara(df: pd.DataFrame, n: int = 12) -> pd.DataFrame:

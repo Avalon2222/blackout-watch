@@ -527,3 +527,15 @@ def test_top_negara_dan_linimasa_batas_negatif_kosong(df_kecil):
     assert analisis.top_negara(df_kecil, n=-1).empty
     assert analisis.linimasa(df_kecil, maks=-2).empty
     assert len(analisis.top_negara(df_kecil, n=2)) == 2
+
+
+def test_per_negara_jumlah_seri_urut_nama():
+    baris = []
+    for i in range(60):
+        for _ in range(i % 3 + 1):
+            baris.append({"id": len(baris), "negara": f"N{i:02d}", "iso3": f"X{i:02d}", "wilayah": "Asia",
+                          "tahun": 2020, "durasi_hari": 1.0, "pemicu": "Pemilu"})
+    hasil = analisis.per_negara(pd.DataFrame(baris))
+    teratas = hasil[hasil["jumlah"] == 3]["negara"].tolist()
+    assert teratas == sorted(teratas)
+    assert hasil["jumlah"].is_monotonic_decreasing
