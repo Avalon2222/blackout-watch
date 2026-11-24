@@ -579,3 +579,12 @@ def test_pemicu_vs_alasan_seri_urut_nama():
     hasil = analisis.pemicu_vs_alasan(df, minimal=1)
     kunci = list(zip(-hasil["jumlah"], hasil["pemicu"], hasil["alasan_pemerintah"]))
     assert kunci == sorted(kunci)
+
+
+def test_linimasa_label_negara_kosong_tetap_ada(df_kecil):
+    df = df_kecil.copy()
+    df["negara"] = df["negara"].astype(object)
+    df.loc[df["id"] == 3, "negara"] = None
+    gantt = analisis.linimasa(df).set_index("id")
+    assert gantt.loc[3, "label"].startswith("Tidak diketahui · ")
+    assert gantt["label"].notna().all()
