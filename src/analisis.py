@@ -146,7 +146,10 @@ def pemicu_vs_alasan(df: pd.DataFrame, minimal: int = 5) -> pd.DataFrame:
     kerja = df[["pemicu", "alasan_pemerintah"]].fillna("Tidak diketahui")
     pasangan = kerja.groupby(["pemicu", "alasan_pemerintah"]).size().reset_index(name="jumlah")
     pasangan = pasangan[pasangan["jumlah"] >= minimal]
-    return pasangan.sort_values("jumlah", ascending=False).reset_index(drop=True)
+    # Jumlah seri diurutkan menurut nama agar urutan aliran Sankey tidak berubah-ubah.
+    return pasangan.sort_values(
+        ["jumlah", "pemicu", "alasan_pemerintah"], ascending=[False, True, True], kind="mergesort"
+    ).reset_index(drop=True)
 
 
 def platform_per_tahun(df: pd.DataFrame) -> pd.DataFrame:

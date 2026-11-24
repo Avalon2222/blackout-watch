@@ -569,3 +569,13 @@ def test_ringkasan_negara_kosong_semua_tidak_error():
     assert hasil["jumlah"] == 2
     assert hasil["negara_teratas"] == "-"
     assert hasil["jumlah_teratas"] == 0
+
+
+def test_pemicu_vs_alasan_seri_urut_nama():
+    df = pd.DataFrame({
+        "pemicu": [f"P{i % 20:02d}" for i in range(200)],
+        "alasan_pemerintah": [f"A{(i // 20) % 3}" for i in range(200)],
+    })
+    hasil = analisis.pemicu_vs_alasan(df, minimal=1)
+    kunci = list(zip(-hasil["jumlah"], hasil["pemicu"], hasil["alasan_pemerintah"]))
+    assert kunci == sorted(kunci)
