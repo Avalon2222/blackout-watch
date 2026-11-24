@@ -588,3 +588,9 @@ def test_linimasa_label_negara_kosong_tetap_ada(df_kecil):
     gantt = analisis.linimasa(df).set_index("id")
     assert gantt.loc[3, "label"].startswith("Tidak diketahui · ")
     assert gantt["label"].notna().all()
+
+
+def test_nama_negara_cadangan_nan_pakai_kode():
+    assert nama_dari_iso3("XYZ", float("nan")) == "XYZ"
+    assert nama_dari_iso2("QQ", float("nan")) == "QQ"
+    assert nama_dari_iso3("IDN", float("nan")) == "Indonesia"

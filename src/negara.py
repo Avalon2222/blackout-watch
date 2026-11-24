@@ -159,10 +159,13 @@ def info_negara(nama_stop: str) -> tuple[str, str, str]:
 def nama_dari_iso3(iso3: str, cadangan: str = "") -> str:
     """Nama Indonesia dari kode ISO-3; jika tidak ada di tabel, pakai `cadangan` (biasanya nama Inggris)."""
     kode = iso3.strip().upper() if isinstance(iso3, str) else ""
+    # Nama cadangan dari CSV bisa NaN (float, dianggap "benar"), jangan sampai jadi nama negara.
+    cadangan = cadangan.strip() if isinstance(cadangan, str) else ""
     return _ISO3_KE_NAMA.get(kode, cadangan or kode)
 
 
 def nama_dari_iso2(iso2: str, cadangan: str = "") -> str:
     """Nama Indonesia dari kode ISO-2 (format IODA)."""
     kode = iso2.strip().upper() if isinstance(iso2, str) else ""
+    cadangan = cadangan.strip() if isinstance(cadangan, str) else ""
     return nama_dari_iso3(ISO2_KE_ISO3.get(kode, ""), cadangan or kode)
