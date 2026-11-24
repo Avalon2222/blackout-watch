@@ -558,3 +558,14 @@ def test_urai_kejadian_bendera_berlangsung_teks():
     ]
     df = ioda.urai_kejadian(data).sort_values("mulai")
     assert df["sedang_berlangsung"].tolist() == [False, True, False]
+
+
+def test_ringkasan_negara_kosong_semua_tidak_error():
+    df = pd.DataFrame({
+        "id": [1, 2], "negara": [None, None], "durasi_hari": [1.0, 2.0], "kekerasan": ["Ya", "Tidak"],
+        "pemicu": ["Pemilu", "Lainnya"], "status": ["Selesai", "Selesai"],
+    })
+    hasil = analisis.ringkasan(df)
+    assert hasil["jumlah"] == 2
+    assert hasil["negara_teratas"] == "-"
+    assert hasil["jumlah_teratas"] == 0
