@@ -54,6 +54,7 @@ def ringkasan(df: pd.DataFrame) -> dict:
             "jumlah": 0, "negara": 0, "hari": 0.0, "median_hari": 0.0, "persen_kekerasan": 0.0,
             "persen_kerusuhan": 0.0, "negara_teratas": "-", "jumlah_teratas": 0, "berlangsung": 0,
         }
+    # Negara kosong tidak bisa jadi "negara teratas"; kalau semuanya kosong, tampilkan "-" alih-alih IndexError.
     per_negara = df.groupby("negara").size().sort_values(ascending=False)
     kekerasan_diketahui = df[df["kekerasan"].isin(["Ya", "Tidak"])]
     return {
@@ -63,8 +64,8 @@ def ringkasan(df: pd.DataFrame) -> dict:
         "median_hari": float(df["durasi_hari"].median()) if df["durasi_hari"].notna().any() else 0.0,
         "persen_kekerasan": float((kekerasan_diketahui["kekerasan"] == "Ya").mean() * 100) if len(kekerasan_diketahui) else 0.0,
         "persen_kerusuhan": float(df["pemicu"].isin(PEMICU_KERUSUHAN).mean() * 100),
-        "negara_teratas": str(per_negara.index[0]),
-        "jumlah_teratas": int(per_negara.iloc[0]),
+        "negara_teratas": str(per_negara.index[0]) if len(per_negara) else "-",
+        "jumlah_teratas": int(per_negara.iloc[0]) if len(per_negara) else 0,
         "berlangsung": int((df["status"] == "Berlangsung").sum()),
     }
 
