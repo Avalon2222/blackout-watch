@@ -205,7 +205,9 @@ def linimasa(df: pd.DataFrame, maks: int = 60) -> pd.DataFrame:
     kerja["akhir_gantt"] = akhir.where(akhir.notna(), dari_durasi)
     kerja["akhir_gantt"] = kerja["akhir_gantt"] + pd.Timedelta(days=1)  # bar minimal selebar 1 hari
     daerah = kerja["daerah"].fillna("").astype(str).str.strip().str.slice(0, 40)
-    kerja["label"] = kerja["negara"] + " · " + daerah.replace("", "nasional")
+    # Negara kosong membuat seluruh label jadi NaN dan barnya kehilangan nama di grafik.
+    negara = kerja["negara"].fillna("Tidak diketahui").astype(str)
+    kerja["label"] = negara + " · " + daerah.replace("", "nasional")
     kerja = kerja.sort_values("mulai", ascending=False).head(max(maks, 0))
     return kerja
 
