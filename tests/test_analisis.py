@@ -619,3 +619,9 @@ def test_gabung_konflik_korban_inf_dan_teks_jadi_nol(df_kecil, df_konflik):
     assert gab.loc[gab["iso3"] == "MEX", "korban"].iloc[0] == 0
     assert gab.loc[gab["iso3"] == "IDN", "korban"].iloc[0] == 0
     assert gab.loc[(gab["iso3"] == "MMR") & (gab["tahun"] == 2021), "korban"].iloc[0] == 5000
+
+
+def test_urai_ringkasan_lewati_entri_bukan_objek():
+    ringkas = ioda.urai_ringkasan([None, "rusak", {"entity": {"code": "ID", "name": "Indonesia"}, "event_cnt": 3}])
+    assert ringkas["kode"].tolist() == ["ID"]
+    assert ringkas["jumlah_kejadian"].tolist() == [3]

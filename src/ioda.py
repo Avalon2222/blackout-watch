@@ -72,6 +72,9 @@ def urai_ringkasan(data: list[dict[str, Any]]) -> pd.DataFrame:
     """
     baris = []
     for item in data:
+        # Entri null/bukan objek kadang muncul di list; lewati saja seperti di urai_kejadian.
+        if not isinstance(item, dict):
+            continue
         ent = item.get("entity") or {}
         skor = item.get("scores") or {}
         baris.append(
