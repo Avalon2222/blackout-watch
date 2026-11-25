@@ -594,3 +594,9 @@ def test_nama_negara_cadangan_nan_pakai_kode():
     assert nama_dari_iso3("XYZ", float("nan")) == "XYZ"
     assert nama_dari_iso2("QQ", float("nan")) == "QQ"
     assert nama_dari_iso3("IDN", float("nan")) == "Indonesia"
+
+
+def test_platform_per_tahun_kosong_tetap_punya_kolom(df_kecil):
+    pp = analisis.platform_per_tahun(df_kecil.iloc[0:0])
+    assert pp.empty
+    assert pp.columns.tolist() == ["tahun", "platform", "jumlah"]
