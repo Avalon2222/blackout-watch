@@ -600,3 +600,12 @@ def test_platform_per_tahun_kosong_tetap_punya_kolom(df_kecil):
     pp = analisis.platform_per_tahun(df_kecil.iloc[0:0])
     assert pp.empty
     assert pp.columns.tolist() == ["tahun", "platform", "jumlah"]
+
+
+def test_linimasa_durasi_inf_dianggap_satu_hari(df_kecil):
+    df = df_kecil.copy()
+    df.loc[df["id"] == 6, "durasi_hari"] = float("inf")
+    df.loc[df["id"] == 6, "selesai"] = pd.NaT
+    gantt = analisis.linimasa(df).set_index("id")
+    assert gantt.loc[6, "akhir_gantt"] == pd.Timestamp("2023-06-11")
+    assert len(gantt) == 6
