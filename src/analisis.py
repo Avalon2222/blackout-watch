@@ -241,7 +241,9 @@ def gabung_konflik(df_shutdown: pd.DataFrame, df_konflik: pd.DataFrame, tahun_aw
     gabung["negara"] = gabung["negara"].fillna(gabung["negara_ucdp"])
     gabung = gabung.drop(columns=["negara_ucdp"])
     for k in ["shutdown", "korban", "kejadian"]:
-        gabung[k] = gabung[k].fillna(0).astype(int)
+        # Angka inf/teks di CSV UCDP dianggap 0 daripada membuat astype(int) gagal untuk semua negara.
+        angka = pd.to_numeric(gabung[k], errors="coerce").replace([float("inf"), float("-inf")], float("nan"))
+        gabung[k] = angka.fillna(0).astype(int)
     return gabung.sort_values(["tahun", "shutdown"], ascending=[True, False]).reset_index(drop=True)
 
 

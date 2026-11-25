@@ -609,3 +609,13 @@ def test_linimasa_durasi_inf_dianggap_satu_hari(df_kecil):
     gantt = analisis.linimasa(df).set_index("id")
     assert gantt.loc[6, "akhir_gantt"] == pd.Timestamp("2023-06-11")
     assert len(gantt) == 6
+
+
+def test_gabung_konflik_korban_inf_dan_teks_jadi_nol(df_kecil, df_konflik):
+    kf = df_konflik.copy().astype({"korban": object})
+    kf.loc[kf["iso3"] == "MEX", "korban"] = float("inf")
+    kf.loc[kf["iso3"] == "IDN", "korban"] = "n/a"
+    gab = analisis.gabung_konflik(df_kecil, kf, 2016, 2025)
+    assert gab.loc[gab["iso3"] == "MEX", "korban"].iloc[0] == 0
+    assert gab.loc[gab["iso3"] == "IDN", "korban"].iloc[0] == 0
+    assert gab.loc[(gab["iso3"] == "MMR") & (gab["tahun"] == 2021), "korban"].iloc[0] == 5000
