@@ -161,7 +161,8 @@ def platform_per_tahun(df: pd.DataFrame) -> pd.DataFrame:
         for p in nama:
             kunci = p.lower().replace("x/twitter", "twitter")
             baris.append({"tahun": th, "platform": p, "jumlah": int(teks.str.contains(kunci, regex=False).sum())})
-    return pd.DataFrame(baris)
+    # Tanpa baris pun kolomnya tetap ada, supaya grafik tidak gagal mencari kolom "tahun".
+    return pd.DataFrame(baris, columns=["tahun", "platform", "jumlah"])
 
 
 def kategori_durasi(hari: float) -> str:
