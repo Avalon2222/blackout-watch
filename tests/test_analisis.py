@@ -648,3 +648,14 @@ def test_peta_tidak_peka_huruf_besar():
     assert siapkan_data._peta("yes", siapkan_data.YA_TIDAK) == "Ya"
     assert siapkan_data._peta(" NO ", siapkan_data.YA_TIDAK) == "Tidak"
     assert siapkan_data._peta("Lain", siapkan_data.YA_TIDAK) == "Lain"
+
+
+def test_urai_sinyal_tanpa_waktu_awal_dilewati():
+    data = [[
+        {"datasource": "bgp", "from": None, "step": 300, "values": [1, 2]},
+        {"datasource": "ping-slash24", "step": 300, "values": [3, 4]},
+        {"datasource": "merit-nt", "from": 1731900000, "step": 300, "values": [5]},
+    ]]
+    df = ioda.urai_sinyal(data)
+    assert df["sumber"].tolist() == ["merit-nt"]
+    assert df["waktu"].min().year >= 2024
