@@ -19,6 +19,7 @@ aplikasi tetap tampil ketika API IODA tidak terjangkau.
 from __future__ import annotations
 
 import argparse
+import math
 import sys
 from pathlib import Path
 
@@ -148,7 +149,8 @@ def hitung_durasi(mulai, selesai, durasi_mentah) -> float:
         nilai = float(durasi_mentah)
     except (TypeError, ValueError):
         return float("nan")
-    if pd.isna(nilai) or nilai < 0:
+    # inf dari spreadsheet bukan durasi; tanpa ini histogram & total hari ikut jadi tak hingga.
+    if not math.isfinite(nilai) or nilai < 0:
         return float("nan")
     return max(nilai, 1.0)
 
