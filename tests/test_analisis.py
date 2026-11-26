@@ -625,3 +625,15 @@ def test_urai_ringkasan_lewati_entri_bukan_objek():
     ringkas = ioda.urai_ringkasan([None, "rusak", {"entity": {"code": "ID", "name": "Indonesia"}, "event_cnt": 3}])
     assert ringkas["kode"].tolist() == ["ID"]
     assert ringkas["jumlah_kejadian"].tolist() == [3]
+
+
+def test_ringkasan_negara_teratas_seri_urut_abjad():
+    # 300 negara dengan jumlah 1-3; quicksort bawaan mengacak urutan negara yang jumlahnya sama.
+    nama = [f"N{i:03d}" for i in range(300)]
+    baris = []
+    for i, nm in enumerate(nama):
+        baris += [nm] * (3 if i % 4 in (2, 3) else 1 + i % 2)
+    df = pd.DataFrame({"negara": baris, "kekerasan": "Ya", "durasi_hari": 1.0, "pemicu": "Pemilu", "status": "Selesai"})
+    hasil = analisis.ringkasan(df)
+    assert hasil["negara_teratas"] == "N002"
+    assert hasil["jumlah_teratas"] == 3

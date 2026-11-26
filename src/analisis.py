@@ -55,7 +55,8 @@ def ringkasan(df: pd.DataFrame) -> dict:
             "persen_kerusuhan": 0.0, "negara_teratas": "-", "jumlah_teratas": 0, "berlangsung": 0,
         }
     # Negara kosong tidak bisa jadi "negara teratas"; kalau semuanya kosong, tampilkan "-" alih-alih IndexError.
-    per_negara = df.groupby("negara").size().sort_values(ascending=False)
+    # mergesort: negara dengan jumlah seri tetap urut abjad, jadi "negara teratas" tidak acak.
+    per_negara = df.groupby("negara").size().sort_values(ascending=False, kind="mergesort")
     kekerasan_diketahui = df[df["kekerasan"].isin(["Ya", "Tidak"])]
     return {
         "jumlah": len(df),
