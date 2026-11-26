@@ -231,6 +231,11 @@ def test_hitung_durasi():
     assert pd.isna(siapkan_data.hitung_durasi(pd.Timestamp("2019-08-22"), pd.NaT, None))
 
 
+def test_hitung_durasi_tak_hingga_jadi_kosong():
+    assert pd.isna(siapkan_data.hitung_durasi(pd.Timestamp("2019-08-22"), pd.NaT, "inf"))
+    assert pd.isna(siapkan_data.hitung_durasi(pd.NaT, pd.NaT, float("inf")))
+
+
 def test_daftar_platform():
     baris = pd.Series({"facebook_affected": "Yes", "twitter_affected": "No", "whatsapp_affected": "Yes",
                        "instagram_affected": "Unknown", "telegram_affected": "No", "other_affected": "TikTok Live"})
