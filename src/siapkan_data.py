@@ -125,7 +125,12 @@ KOLOM_KELUARAN = [
 def _peta(nilai, tabel: dict[str, str], bawaan: str = "Tidak diketahui") -> str:
     if pd.isna(nilai):
         return bawaan
-    return tabel.get(str(nilai).strip(), str(nilai).strip())
+    teks = str(nilai).strip()
+    if teks in tabel:
+        return tabel[teks]
+    # Spreadsheet STOP kadang menulis "yes"/"ENDED"; cocokkan tanpa peduli huruf besar-kecil.
+    kecil = {k.lower(): v for k, v in tabel.items()}
+    return kecil.get(teks.lower(), teks)
 
 
 def daftar_platform(baris: pd.Series) -> str:

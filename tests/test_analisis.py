@@ -642,3 +642,9 @@ def test_ringkasan_negara_teratas_seri_urut_abjad():
     hasil = analisis.ringkasan(df)
     assert hasil["negara_teratas"] == "N002"
     assert hasil["jumlah_teratas"] == 3
+
+
+def test_peta_tidak_peka_huruf_besar():
+    assert siapkan_data._peta("yes", siapkan_data.YA_TIDAK) == "Ya"
+    assert siapkan_data._peta(" NO ", siapkan_data.YA_TIDAK) == "Tidak"
+    assert siapkan_data._peta("Lain", siapkan_data.YA_TIDAK) == "Lain"
