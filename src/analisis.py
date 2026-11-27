@@ -91,7 +91,8 @@ def aktif_per_tahun(df: pd.DataFrame, tahun_awal: int = 2016, tahun_akhir: int =
     for th in range(tahun_awal, tahun_akhir + 1):
         aktif = (df["tahun_laporan_awal"] <= th) & (df["tahun_laporan_akhir"] >= th)
         baris.append({"tahun": th, "aktif": int(aktif.sum()), "dimulai": int((df["tahun"] == th).sum())})
-    return pd.DataFrame(baris)
+    # Rentang terbalik/kosong tetap mengembalikan kolom yang sama, supaya grafik tidak gagal mencari "tahun".
+    return pd.DataFrame(baris, columns=["tahun", "aktif", "dimulai"])
 
 
 def per_negara(df: pd.DataFrame) -> pd.DataFrame:
