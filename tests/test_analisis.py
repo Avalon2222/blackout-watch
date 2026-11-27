@@ -670,3 +670,14 @@ def test_urai_kejadian_durasi_nan_tetap_disimpan():
     assert len(df) == 2
     assert (df["durasi_menit"] == 0).all()
     assert (df["selesai"] == df["mulai"]).all()
+
+
+def test_urai_kejadian_mulai_sama_tetap_urutan_api():
+    data = [
+        {"location": f"country/X{i}", "start": 1_700_000_000 + (i % 3) * 600, "duration": 60}
+        for i in range(60)
+    ]
+    df = ioda.urai_kejadian(data)
+    for _, grup in df.groupby("mulai"):
+        nomor = [int(x.split("X")[1]) for x in grup["lokasi"]]
+        assert nomor == sorted(nomor)

@@ -130,7 +130,8 @@ def urai_kejadian(data: list[dict[str, Any]]) -> pd.DataFrame:
     kolom = ["lokasi", "nama_en", "mulai", "selesai", "durasi_menit", "sumber", "skor", "sedang_berlangsung"]
     df = pd.DataFrame(baris, columns=kolom)
     if not df.empty:
-        df = df.sort_values("mulai", ascending=False).reset_index(drop=True)
+        # mergesort: kejadian yang mulai bersamaan (beda sumber data) tetap dalam urutan API, tidak diacak.
+        df = df.sort_values("mulai", ascending=False, kind="mergesort").reset_index(drop=True)
     return df
 
 
