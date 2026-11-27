@@ -681,3 +681,8 @@ def test_urai_kejadian_mulai_sama_tetap_urutan_api():
     for _, grup in df.groupby("mulai"):
         nomor = [int(x.split("X")[1]) for x in grup["lokasi"]]
         assert nomor == sorted(nomor)
+
+
+@pytest.mark.parametrize("hari", [-3, -0.5, float("inf")])
+def test_kategori_durasi_negatif_atau_tak_hingga(hari):
+    assert analisis.kategori_durasi(hari) == "Tidak diketahui"

@@ -168,7 +168,8 @@ def platform_per_tahun(df: pd.DataFrame) -> pd.DataFrame:
 
 def kategori_durasi(hari: float) -> str:
     """Kelompok durasi agar histogram mudah dibaca."""
-    if pd.isna(hari):
+    # Durasi negatif (tanggal selesai sebelum mulai) atau tak hingga adalah data rusak, bukan "≤ 1 hari".
+    if pd.isna(hari) or hari < 0 or hari == float("inf"):
         return "Tidak diketahui"
     if hari <= 1:
         return "≤ 1 hari"
