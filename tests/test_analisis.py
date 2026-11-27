@@ -659,3 +659,14 @@ def test_urai_sinyal_tanpa_waktu_awal_dilewati():
     df = ioda.urai_sinyal(data)
     assert df["sumber"].tolist() == ["merit-nt"]
     assert df["waktu"].min().year >= 2024
+
+
+def test_urai_kejadian_durasi_nan_tetap_disimpan():
+    data = [
+        {"location": "country/ID", "start": 1731900000, "duration": float("nan"), "datasource": "bgp"},
+        {"location": "country/IR", "start": 1731900600, "duration": None, "datasource": "ping-slash24"},
+    ]
+    df = ioda.urai_kejadian(data)
+    assert len(df) == 2
+    assert (df["durasi_menit"] == 0).all()
+    assert (df["selesai"] == df["mulai"]).all()

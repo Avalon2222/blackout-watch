@@ -108,7 +108,11 @@ def urai_kejadian(data: list[dict[str, Any]]) -> pd.DataFrame:
         try:
             mulai = pd.to_datetime(int(float(e["start"])), unit="s", utc=True)
             # Durasi negatif membuat waktu selesai jatuh sebelum mulai; anggap saja kejadian sesaat.
-            durasi = max(int(float(e.get("duration", 0) or 0)), 0)
+            # Durasi NaN sama artinya dengan null (tidak diketahui): anggap 0, jangan buang kejadiannya.
+            mentah = e.get("duration")
+            if mentah is None or mentah == "" or (isinstance(mentah, float) and mentah != mentah):
+                mentah = 0
+            durasi = max(int(float(mentah)), 0)
         except (TypeError, ValueError, OverflowError):
             continue
         baris.append(
