@@ -701,3 +701,15 @@ def test_urai_ioda_teks_null_jadi_string_kosong():
     assert kejadian.iloc[0][["lokasi", "nama_en", "sumber"]].tolist() == ["", "", ""]
     # kolom teks harus bisa dipakai dengan .str tanpa error
     assert kejadian["lokasi"].str.startswith("country").tolist() == [False]
+
+
+def test_linimasa_selesai_sebelum_mulai_dianggap_kosong(df_kecil):
+    df = df_kecil.copy()
+    df.loc[1, "mulai"] = pd.Timestamp("2024-05-10")
+    df.loc[1, "selesai"] = pd.Timestamp("2024-05-01")
+    df.loc[1, "durasi_hari"] = 3.0
+    hasil = analisis.linimasa(df).set_index("id")
+    baris = hasil.loc[df.loc[1, "id"]]
+    assert baris["akhir_gantt"] > baris["mulai"]
+    # selesai dihitung dari durasi: mulai + (3 - 1) hari, lalu +1 hari supaya bar minimal 1 hari
+    assert baris["akhir_gantt"] == pd.Timestamp("2024-05-13")
