@@ -133,6 +133,8 @@ ISO2_KE_ISO3: dict[str, str] = {
 }
 
 _ISO3_KE_NAMA: dict[str, str] = {iso3: nama for iso3, nama, _ in PETA_NEGARA.values()}
+# Pencarian tanpa memandang huruf besar/kecil ("INDIA", "indonesia") agar ejaan di lembar baru tetap terpetakan.
+_PETA_KECIL: dict[str, tuple[str, str, str]] = {nama.lower(): info for nama, info in PETA_NEGARA.items()}
 
 
 def info_negara(nama_stop: str) -> tuple[str, str, str]:
@@ -153,6 +155,8 @@ def info_negara(nama_stop: str) -> tuple[str, str, str]:
     pertama = bersih.split(";")[0].strip()
     if pertama in PETA_NEGARA:
         return PETA_NEGARA[pertama]
+    if pertama.lower() in _PETA_KECIL:
+        return _PETA_KECIL[pertama.lower()]
     return ("", bersih, "Lainnya")
 
 
