@@ -196,7 +196,9 @@ def sebaran_durasi(df: pd.DataFrame) -> pd.DataFrame:
 def linimasa(df: pd.DataFrame, maks: int = 60) -> pd.DataFrame:
     """Baris untuk grafik Gantt: pemutusan tanpa tanggal selesai diberi selesai = mulai + durasi atau +1 hari."""
     kerja = df.copy()
-    akhir = kerja["selesai"]
+    # Tanggal selesai yang jatuh sebelum mulai adalah data rusak; bar negatif tidak bisa digambar,
+    # jadi perlakukan seperti tanggal selesai kosong.
+    akhir = kerja["selesai"].where(kerja["selesai"] >= kerja["mulai"])
     # Durasi inf/teks dianggap tidak diketahui (1 hari); to_timedelta gagal total kalau ada satu saja inf.
     durasi = pd.to_numeric(kerja["durasi_hari"], errors="coerce").replace([float("inf"), float("-inf")], float("nan"))
     dari_durasi = kerja["mulai"] + pd.to_timedelta(durasi.fillna(1).clip(lower=1) - 1, unit="D")
