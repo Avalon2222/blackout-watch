@@ -692,3 +692,12 @@ def test_aktif_per_tahun_rentang_terbalik_tetap_punya_kolom(df_kecil):
     hasil = analisis.aktif_per_tahun(df_kecil, 2025, 2020)
     assert hasil.empty
     assert list(hasil.columns) == ["tahun", "aktif", "dimulai"]
+
+
+def test_urai_ioda_teks_null_jadi_string_kosong():
+    ringkas = ioda.urai_ringkasan([{"entity": {"code": None, "name": None, "type": None}, "scores": {}, "event_cnt": 1}])
+    assert ringkas.iloc[0][["kode", "nama_en", "tipe"]].tolist() == ["", "", ""]
+    kejadian = ioda.urai_kejadian([{"location": None, "location_name": None, "start": 1700000000, "duration": 60, "datasource": None}])
+    assert kejadian.iloc[0][["lokasi", "nama_en", "sumber"]].tolist() == ["", "", ""]
+    # kolom teks harus bisa dipakai dengan .str tanpa error
+    assert kejadian["lokasi"].str.startswith("country").tolist() == [False]

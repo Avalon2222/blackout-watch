@@ -79,9 +79,10 @@ def urai_ringkasan(data: list[dict[str, Any]]) -> pd.DataFrame:
         skor = item.get("scores") or {}
         baris.append(
             {
-                "kode": ent.get("code", ""),
-                "nama_en": ent.get("name", ""),
-                "tipe": ent.get("type", ""),
+                # Kunci yang ada tapi bernilai null harus jadi "", bukan None, agar filter .str tidak gagal.
+                "kode": ent.get("code") or "",
+                "nama_en": ent.get("name") or "",
+                "tipe": ent.get("type") or "",
                 "jumlah_kejadian": int(_angka(item.get("event_cnt"))),
                 "skor_total": _angka(skor.get("overall")),
                 "skor_bgp": _angka(skor.get("bgp.median")),
@@ -117,12 +118,12 @@ def urai_kejadian(data: list[dict[str, Any]]) -> pd.DataFrame:
             continue
         baris.append(
             {
-                "lokasi": e.get("location", ""),
-                "nama_en": e.get("location_name", ""),
+                "lokasi": e.get("location") or "",
+                "nama_en": e.get("location_name") or "",
                 "mulai": mulai,
                 "selesai": mulai + pd.Timedelta(seconds=durasi),
                 "durasi_menit": round(durasi / 60, 1),
-                "sumber": e.get("datasource", ""),
+                "sumber": e.get("datasource") or "",
                 "skor": _angka(e.get("score")),
                 "sedang_berlangsung": _ya(e.get("overlaps_window", False)),
             }
