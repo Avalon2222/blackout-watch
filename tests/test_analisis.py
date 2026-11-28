@@ -713,3 +713,17 @@ def test_linimasa_selesai_sebelum_mulai_dianggap_kosong(df_kecil):
     assert baris["akhir_gantt"] > baris["mulai"]
     # selesai dihitung dari durasi: mulai + (3 - 1) hari, lalu +1 hari supaya bar minimal 1 hari
     assert baris["akhir_gantt"] == pd.Timestamp("2024-05-13")
+
+
+def test_muat_shutdown_angka_teks_jadi_kosong(tmp_path):
+    df = muat_data.muat_shutdown().head(3).copy()
+    df = df.astype({"durasi_hari": "object", "tahun_laporan_akhir": "object"})
+    df.loc[df.index[0], "durasi_hari"] = "-"
+    df.loc[df.index[1], "tahun_laporan_akhir"] = "?"
+    path = tmp_path / "shutdown.csv"
+    df.to_csv(path, index=False)
+    hasil = muat_data.muat_shutdown(path)
+    assert pd.isna(hasil["durasi_hari"].iloc[0]) and pd.isna(hasil["tahun_laporan_akhir"].iloc[1])
+    # kolom angka tetap bisa dijumlahkan dan difilter per tahun aktif
+    assert analisis.ringkasan(hasil)["hari"] >= 0
+    assert len(analisis.filter_data(hasil, 2000, 2030, dasar_tahun="aktif")) >= 1
