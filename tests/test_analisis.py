@@ -727,3 +727,10 @@ def test_muat_shutdown_angka_teks_jadi_kosong(tmp_path):
     # kolom angka tetap bisa dijumlahkan dan difilter per tahun aktif
     assert analisis.ringkasan(hasil)["hari"] >= 0
     assert len(analisis.filter_data(hasil, 2000, 2030, dasar_tahun="aktif")) >= 1
+
+
+def test_info_negara_tidak_peka_huruf():
+    assert info_negara("INDIA") == ("IND", "India", "Asia")
+    assert info_negara(" indonesia ") == ("IDN", "Indonesia", "Asia")
+    assert info_negara("myanmar; Laos")[0] == "MMR"
+    assert info_negara("Narnia") == ("", "Narnia", "Lainnya")
