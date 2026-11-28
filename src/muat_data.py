@@ -32,6 +32,9 @@ def muat_shutdown(path: Path | None = None) -> pd.DataFrame:
     df["tahun"] = tahun[tahun.notna()].astype(int)
     for kolom in ["daerah", "keterangan", "sumber_url", "platform"]:
         df[kolom] = df[kolom].fillna("").astype(str)
+    # Sel angka yang terisi teks ("-", "?") membuat sum/median dan perbandingan tahun gagal; jadikan NaN.
+    for kolom in ["durasi_hari", "tahun_laporan_awal", "tahun_laporan_akhir"]:
+        df[kolom] = pd.to_numeric(df[kolom], errors="coerce")
     return df
 
 
